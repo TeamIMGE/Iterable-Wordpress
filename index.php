@@ -3,7 +3,7 @@
 Plugin Name: Wordpress Iterable Add-On
 Plugin URI: http://www.imge.com
 Description: Iterable integration for Wordpress.
-Version: 3.0
+Version: 4.0.1
 Author: Chris Lewis
 Author URI: http://www.imge.com
 */
