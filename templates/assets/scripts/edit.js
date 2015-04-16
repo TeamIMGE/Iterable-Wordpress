@@ -18,6 +18,7 @@ jQuery( document ).ready( function( $ ) {
 						choices.push( { id: id, name: name } );
 					} );
 					item.choices = choices;
+                    window.gravityform_fields.push( item );
 				}
 
 				if( _.isArray( result[ i ].inputs ) ) {
