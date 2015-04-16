@@ -3,16 +3,16 @@
 Plugin Name: Wordpress Iterable Add-On
 Plugin URI: http://www.imge.com
 Description: Iterable integration for Wordpress.
-Version: 4.0.1
+Version: 4.0.2
 Author: Chris Lewis
 Author URI: http://www.imge.com
 */
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
-require_once( dirname( __FILE__ ) . '/Update/BFIGitHubPluginUploader.php' );
 
 if( is_admin() ) {
+    require_once( dirname( __FILE__ ) . '/Update/BFIGitHubPluginUploader.php' );
     new BFIGithubPluginUpdater( __FILE__, 'cdlewis', 'Iterable-Wordpress' );
 }
 
