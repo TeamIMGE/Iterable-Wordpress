@@ -21,6 +21,7 @@ add_action( 'admin_init', function() {
     register_setting( 'iterable-settings', 'api_key' );
     register_setting( 'iterable-settings', 'listwise_key' );
     register_setting( 'iterable-message-channels', 'message_channels' );
+    register_setting( 'iterable-campaigns', 'campaigns' );
 } );
 
 add_action( 'admin_menu', function() {
@@ -41,9 +42,89 @@ add_action( 'admin_menu', function() {
     add_submenu_page( 'iterable', 'Message Channels', 'Message Channels', 'manage_options', 'iterable_message_channels', function() {
         require_once( dirname( __FILE__ ) . '/templates/message_channels.php' );
     } );
+    add_submenu_page( 'iterable', 'Campaigns', 'Campaigns', 'manage_options', 'iterable_campaigns', function() {
+        $iterable = new Iterable( get_option( 'api_key' ) );
+        require_once( dirname( __FILE__ ) . '/templates/campaigns.php' );
+    } );
     add_submenu_page( 'iterable', 'Settings', 'Settings', 'manage_options', 'iterable_settings', function() {
         require_once( dirname( __FILE__ ) . '/templates/settings.php' );
     } );
+} );
+
+/* Campaigns */
+
+add_filter( 'cron_schedules', function( $interval ) {
+    $interval[ 'minutes_10' ] = array( 'interval' => 10 * 60, 'display' => 'Once Every 10 Minutes' );
+    return $interval;
+} );
+
+register_activation_hook( __FILE__, function() {
+    if( !wp_next_scheduled( 'iterablecampaignshook' ) ) {
+        wp_schedule_event( time(), 'minutes_10', 'iterablecampaignshook' );
+    }
+} );
+
+add_action( 'iterablecampaignshook', function() {
+    trigger_error( 'Iterable Campaigns Hook: Start >> ', E_USER_WARNING );
+    $campaigns = json_decode( get_option( 'campaigns' ), true );
+    $one_hour = 60 * 60;
+    $one_day = $one_hour * 24;
+    if( $campaigns ) {
+        $changed = false;
+        foreach( $campaigns as &$c ) {
+            // make sure times are ints
+            $c[ 'last_send' ] = intval( $c[ 'last_send' ] );
+
+            date_default_timezone_set( get_option( 'timezone_string' ) );
+            $send_time = strtotime( $c[ 'send_at' ] );
+
+            // Has this happened already today?
+            if( isset( $c[ 'last_send' ] ) && date( 'd', time() ) == date( 'd', $c[ 'last_send' ] ) ) {
+                trigger_error( 'Send has already occurred today', E_USER_WARNING );
+                continue;
+            }
+
+            if( is_numeric( $c[ 'suppression_list_ids' ] ) ) {
+                $c[ 'suppression_list_ids' ] = array( $c[ 'suppression_list_ids' ] );
+            } else {
+                $c[ 'suppression_list_ids' ] = false;
+            }
+
+            // Is it time for the send today?
+            if( time() >= $send_time - $one_hour && time() <= $send_time ) {
+                $iterable = new Iterable( get_option( 'api_key' ) );
+                $result = $iterable->campaigns_create(
+                    $c[ 'name' ],
+                    $c[ 'list_id' ],
+                    $c[ 'template_id' ],
+                    $c[ 'suppression_list_ids' ],
+                    date( 'Y-m-d H:i:s', strtotime( $c[ 'send_at' ] ) )
+                );
+
+                if( !$result[ 'success' ] ) {
+                    trigger_error( 'Error sending campaign' . print_r( $result, true ), E_USER_WARNING );
+                }
+
+                trigger_error( 'iterable campaigns create >>> ' . print_r( $result, true ), E_USER_WARNING );
+
+                $c[ 'last_send' ] = time();
+                $changed = true;
+            }  else {
+                trigger_error( 'Not send time yet >> ' . print_r( $c, true ) . ' >> ' . $send_time . ' >> ' . time(), E_USER_WARNING );
+            }
+
+            if( $changed ) {
+                update_option( 'campaigns', json_encode( $campaigns ) );
+            }
+        }
+        unset( $c );
+    } else {
+        trigger_error( 'Campaigns is null', E_USER_WARNING );
+    }
+} );
+
+register_deactivation_hook( __FILE__, function() {
+    wp_clear_scheduled_hook( 'campaigns' );
 } );
 
 /* Manage Message Channels */
@@ -102,6 +183,7 @@ add_action( 'wp_ajax_updatechannel', function() {
 add_action( 'wp_ajax_subscribe', function() {
     $iterable = new Iterable( get_option( 'api_key' ) );
     $subscribers = json_decode( stripslashes( $_REQUEST[ 'subscribers' ] ), true );
+    unset( $_REQUEST[ 'subscribers' ] );
     $list_id = $_REQUEST[ 'iterablelist' ];
     $resubscribe = $_REQUEST[ 'resubscribe' ] === 'true';
 
@@ -111,30 +193,32 @@ add_action( 'wp_ajax_subscribe', function() {
         $override = $_REQUEST[ 'override' ];
     }
 
-    $all_users = $iterable->export_csv( 'user', 'All', false, false, false, array_keys( $override ) );
-    if( !$all_users ) {
+    $all_users_req = $iterable->export_csv( 'user', 'All', false, false, false, array_keys( $override ) );
+    if( !$all_users_req ) {
         trigger_error( print_r( $all_users, true ), E_USER_WARNING );
         echo 'failure (all_users)';
         die();
     }
 
     // convert to hashtable
-    $all_users = explode( PHP_EOL, $all_users[ 'content' ] );
+    $all_users = explode( PHP_EOL, $all_users_req[ 'content' ] );
+    unset( $all_users_req ); // not taking any chances with php gc
     $header = str_getcsv( array_shift( $all_users ) );
     $email_hashtable = array();
-    foreach( $all_users as $index => &$user ) {
+    foreach( $all_users as $index => $user ) {
         $entry = array_combine( $header, str_getcsv( $user ) );
         if( $entry === false ) {
             trigger_error( $user, E_USER_WARNING );
         }
 
         if( $entry !== false ) {
-            $email_hashtable[ $entry[ 'email' ] ] = $entry;
-            unset( $email_hasbtable[ $entry[ 'email' ] ][ 'email' ] );
+            $email = $entry[ 'email' ];
+            unset( $entry[ 'email' ] );
+
+            $email_hashtable[ $entry[ 'email' ] ] = gzcompress( json_encode( $entry ) );
         }
 
-        // save as much space as possible -- yes we've run out of memory here before
-        unset( $all_users[ $index ] );
+        unset( $user, $all_users[ $index ] );
     }
 
     // unset duplicated subscriber information
@@ -143,8 +227,7 @@ add_action( 'wp_ajax_subscribe', function() {
             continue;
         }
 
-        $match = $email_hashtable[ $subscriber[ 'email' ] ];
-        print_r( $match );
+        $match = json_decode( gzuncompress( $email_hashtable[ $subscriber[ 'email' ] ] ) );
         foreach( $subscriber[ 'dataFields' ] as $key => $value ) {
             if( $value === '' || ( isset( $match[ $key ] ) && $match[ $key ] !== '' && $override[ $key ] === 'false' ) ) {
                 unset( $subscriber[ 'dataFields' ][ $key ] );
