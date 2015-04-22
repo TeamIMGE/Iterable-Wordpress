@@ -98,14 +98,15 @@ add_action( 'iterablecampaignshook', function() {
 
             // Is it time for the send today?
             if( time() >= $send_time - $one_hour && time() <= $send_time ) {
+                trigger_error( 'Trigger send time for ' . date( 'Y-m-d H:i:s', $send_time ), E_USER_WARNING );
                 $iterable = new Iterable( get_option( 'api_key' ) );
-                date_default_timezone_set( 'Europe/London' );
+                trigger_error( 'send_at ' . $c[ 'send_at' ] . ' send time ' . $send_time, E_USER_WARNING );
                 $result = $iterable->campaigns_create(
                     $c[ 'name' ],
                     $c[ 'list_id' ],
                     $c[ 'template_id' ],
                     $c[ 'suppression_list_ids' ],
-                    date( 'Y-m-d H:i:s', $send_time )
+                    gmdate( 'Y-m-d H:i:s', $send_time )
                 );
 
                 if( !$result[ 'success' ] ) {
@@ -119,8 +120,7 @@ add_action( 'iterablecampaignshook', function() {
             }  else {
                 trigger_error( 'Not send time yet >> ' . print_r( $c, true ) . ' >> ' . $send_time . ' >> ' . time(), E_USER_WARNING );
             }
-
-            if( $changed ) {
+if( $changed ) {
                 update_option( 'campaigns', json_encode( $campaigns ) );
             }
         }
