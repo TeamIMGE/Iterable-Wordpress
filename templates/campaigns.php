@@ -1,5 +1,5 @@
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>"></script>
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/campaigns.js', __FILE__ ) ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/campaigns.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
 <script type='text/template' class='campaigns_template'>
 <% _.each( campaigns, function( campaign ) { %>
 <tr class='campaign'>

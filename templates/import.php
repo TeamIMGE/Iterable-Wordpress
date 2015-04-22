@@ -1,6 +1,6 @@
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>"></script>
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/papaparse.min.js', __FILE__ ) ?>"></script>
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/import.js', __FILE__ ) ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/papaparse.min.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/import.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
 <script type='text/template' class='error_template'>
 <div class="error import-response-message" style="margin-top: 30px;" id="import_errors" role="alert">
     <p><%= message %>:</p>

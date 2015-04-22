@@ -1,4 +1,4 @@
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/list.js', __FILE__ ) ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/list.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
 
 <a class="button add-new-h2" href="<?= admin_url( 'admin.php?page=iterable_feed_edit' ) ?>">Add New</a>
 <table class="widefat fixed" cellspacing="0">

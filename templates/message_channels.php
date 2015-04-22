@@ -1,5 +1,5 @@
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>"></script>
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/message_channels.js', __FILE__ ) ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/message_channels.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
 <script type='text/template' class='message_channel_template'>
 <% _.each( message_channels, function( channel ) { %>
 <tr class='channel'>

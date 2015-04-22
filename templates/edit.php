@@ -5,8 +5,8 @@
 	}
 ?>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>"></script>
-<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/edit.js', __FILE__ ) ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
+<script type='text/javascript' src="<?= plugins_url( 'assets/scripts/edit.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
 <script type='text/template' class='gravityform_field_template'>
 <% _.each( gravityform_fields, function( gf_field ) { %>
 	<tr class='gravityform_field' data-id='<%= gf_field.id %>'>
