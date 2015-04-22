@@ -54,7 +54,10 @@ add_action( 'admin_menu', function() {
 /* Campaigns */
 
 add_filter( 'cron_schedules', function( $interval ) {
-    $interval[ 'minutes_10' ] = array( 'interval' => 10 * 60, 'display' => 'Once Every 10 Minutes' );
+    $interval[ 'minutes_10' ] = array(
+        'interval' => 10 * 60,
+        'display' => 'Once Every 10 Minutes'
+    );
     return $interval;
 } );
 
@@ -65,7 +68,7 @@ register_activation_hook( __FILE__, function() {
 } );
 
 add_action( 'iterablecampaignshook', function() {
-    trigger_error( 'Iterable Campaigns Hook: Start >> ', E_USER_WARNING );
+    trigger_error( 'Iterable Campaigns Hook: Start >> ' . time(), E_USER_WARNING );
     $campaigns = json_decode( get_option( 'campaigns' ), true );
     $one_hour = 60 * 60;
     $one_day = $one_hour * 24;
@@ -93,12 +96,13 @@ add_action( 'iterablecampaignshook', function() {
             // Is it time for the send today?
             if( time() >= $send_time - $one_hour && time() <= $send_time ) {
                 $iterable = new Iterable( get_option( 'api_key' ) );
+                date_default_timezone_set( 'Europe/London' );
                 $result = $iterable->campaigns_create(
                     $c[ 'name' ],
                     $c[ 'list_id' ],
                     $c[ 'template_id' ],
                     $c[ 'suppression_list_ids' ],
-                    date( 'Y-m-d H:i:s', strtotime( $c[ 'send_at' ] ) )
+                    date( 'Y-m-d H:i:s', $send_time )
                 );
 
                 if( !$result[ 'success' ] ) {
@@ -124,7 +128,7 @@ add_action( 'iterablecampaignshook', function() {
 } );
 
 register_deactivation_hook( __FILE__, function() {
-    wp_clear_scheduled_hook( 'campaigns' );
+    wp_clear_scheduled_hook( 'iterablecampaignshook' );
 } );
 
 /* Manage Message Channels */
