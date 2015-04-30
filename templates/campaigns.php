@@ -12,7 +12,7 @@
         </div>
     </td>
     <td>
-        <input text='text' class='list_id' value='<%= campaign.list_id %>' />
+        <input text='number' class='list_id' value='<%= campaign.list_id %>' />
     </td>
     <td>
         <input type='number' value='<%= campaign.template_id %>' class='template_id' required />
