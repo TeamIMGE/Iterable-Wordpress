@@ -234,7 +234,7 @@ add_action( 'wp_ajax_subscribe', function() {
             continue;
         }
 
-        $match = json_decode( gzuncompress( $email_hashtable[ $subscriber[ 'email' ] ] ) );
+        $match = json_decode( gzuncompress( $email_hashtable[ $subscriber[ 'email' ] ] ), true );
         foreach( $subscriber[ 'dataFields' ] as $key => $value ) {
             if( $value === '' || ( isset( $match[ $key ] ) && $match[ $key ] !== '' && $override[ $key ] === 'false' ) ) {
                 unset( $subscriber[ 'dataFields' ][ $key ] );
