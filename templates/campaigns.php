@@ -12,12 +12,7 @@
         </div>
     </td>
     <td>
-        <select class='list_id'>
-            <option></option>
-            <% _.each( iterable_lists, function( list ) { %>
-                <option value='<%= list.id %>' <% if( list.id == campaign.list_id ) { %>selected<% } %>><%= list.name %></option>
-            <% } ); %>
-        </select>
+        <input text='text' class='list_id' value='<%= campaign.list_id %>' />
     </td>
     <td>
         <input type='number' value='<%= campaign.template_id %>' class='template_id' required />
