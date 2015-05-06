@@ -19,11 +19,13 @@ jQuery( document ).ready( function( $ ) {
     if( !email ) {
         $( '.subscription_container.all_sends' ).html( '<h2>Error: Email not found</h2>' );
         return;
+    } else {
+        $( '#email' ).val( email );
     }
 
     $.get( $( '.subscription_options form' ).attr( 'action' ), {
         action: 'getchannels',
-        email: email
+        email: decodeURIComponent( email )
     }, function( result ) {
         console.log( result );
         var unsubscribed = {};
