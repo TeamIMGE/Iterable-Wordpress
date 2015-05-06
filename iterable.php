@@ -4,6 +4,11 @@
  *
  */
 
+if( class_exists( 'Iterable' ) ) {
+    trigger_error( 'Unable to declare class Iterable, already exists', E_USER_WARNING );
+    return;
+}
+
 class Iterable {
     private $api_key = '';
     private $api_url = 'https://api.iterable.com:443/api/';
@@ -323,8 +328,6 @@ class Iterable {
             'dataFields' => $dataFields
         ) );
 
-        trigger_error( json_encode( $request, JSON_NUMERIC_CHECK ), E_USER_WARNING );
-
         return $this->send_request( 'campaigns/create', json_encode( $request, JSON_NUMERIC_CHECK ), 'POST' );
     }
 
@@ -383,9 +386,21 @@ class Iterable {
 
     /* Email */
 
-    public function email( $campaign_id, $recipient, $send_at = false,
-        $inline_css = false, $attachments = false ) {
-        throw new Exception( 'Not yet implemented' );
+    public function email( $campaign_id, $recipient, $data_fields = false,
+        $send_at = false, $attachments = false ) {
+
+        $request = array(
+            'campaignId' => $campaign_id,
+            'recipientEmail' => $recipient
+        );
+
+        $this->set_optionals( $request, array(
+            'dataFields' => $data_fields,
+            'sendAt' => $send_at,
+            'attachments' => $attachments
+        ) );
+
+        return $this->send_request( 'email/target', json_encode( $request, JSON_NUMERIC_CHECK  ), 'POST' );
     }
 
     /* Export */
