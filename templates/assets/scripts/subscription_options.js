@@ -26,13 +26,7 @@ jQuery( document ).ready( function( $ ) {
     $.get( $( '.subscription_options form' ).attr( 'action' ), {
         action: 'getchannels',
         email: decodeURIComponent( email )
-    }, function( result ) {
-        console.log( result );
-        var unsubscribed = {};
-        for( var i = 0; i < result.length; i++ ) {
-            unsubscribed[ result[ i ] ] = true;
-        }
-
+    }, function( unsubscribed ) {
         $( '.subscription_container.all_sends' ).html(
             _.template( $( '#optin_box' ).html() )( {
                 message_channels: all_channels,

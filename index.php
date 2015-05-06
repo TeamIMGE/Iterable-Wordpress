@@ -164,7 +164,7 @@ add_action( 'wp_ajax_getchannels', function() {
             $unsubscribed_ids[ $i ] = true;
         }
     }
-    echo json_encode( $unsubscribed_ids );
+    echo json_encode( $unsubscribed_ids, JSON_FORCE_OBJECT );
     die();
 } );
 
