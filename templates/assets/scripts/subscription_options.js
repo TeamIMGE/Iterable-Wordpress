@@ -3,7 +3,46 @@ jQuery( document ).ready( function( $ ) {
         return;
     }
 
-    $( '.checkbox input' ).change( function( event ) {
+    function get_parameter( name ) {
+        name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
+        var regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' ),
+        results = regex.exec( location.search );
+        return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
+    }
+
+    // Get user data
+
+    var email = get_parameter( 'email' );
+    if( email === '' ) {
+        email = $.cookie( 'iterableEndUserId' );
+    }
+    if( !email ) {
+        $( '.subscription_container.all_sends' ).html( '<h2>Error: Email not found</h2>' );
+        return;
+    }
+
+    $.get( $( '.subscription_options form' ).attr( 'action' ), {
+        action: 'getchannels',
+        email: email
+    }, function( result ) {
+        console.log( result );
+        var unsubscribed = {};
+        for( var i = 0; i < result.length; i++ ) {
+            unsubscribed[ result[ i ] ] = true;
+        }
+
+        $( '.subscription_container.all_sends' ).html(
+            _.template( $( '#optin_box' ).html() )( {
+                message_channels: all_channels,
+                unsubscribed: unsubscribed
+            } )
+        );
+
+        $( '.fa-spin.loading' ).remove();
+        $( '.checkbox input' ).first().trigger( 'change' );
+    } );
+
+    $( 'body' ).on( 'change', '.checkbox input', function( event ) {
         console.log( 'changed' );
         // update list of subscribed message channels
         var subscribe_list = $( '.subscription_options input:checked' ).map( function() {
@@ -18,7 +57,6 @@ jQuery( document ).ready( function( $ ) {
 
         $( '.subscribed_sends' ).html( subscribe_list );
     } );
-    $( '.checkbox input' ).first().trigger( 'change' );
 
     $( '.subscription_options > form' ).submit( function( event ) {
         console.log( 'form submit' );

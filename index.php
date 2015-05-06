@@ -137,15 +137,25 @@ register_deactivation_hook( __FILE__, function() {
 /* Manage Message Channels */
 
 add_action( 'wp_enqueue_scripts', function() {
-    wp_enqueue_script( 'subscription_page', plugins_url( '/templates/assets/scripts/subscription_options.js', __FILE__ ), array( 'jquery' ), '', true );
+    wp_register_script( 'jquery.cookie', plugins_url( '/templates/assets/scripts/jquery.cookie.js', __FILE__ ), array( 'jquery' ), '', true );
+    wp_register_script( 'subscription_page', plugins_url( '/templates/assets/scripts/subscription_options.js', __FILE__ ), array( 'jquery.cookie' ), '', true );
 } );
 
 add_shortcode( 'subscription_options', function() {
-    $iterable = new Iterable( get_option( 'api_key' ) );
+    wp_enqueue_script( 'subscription_page' );
+
     $all_channels = json_decode( get_option( 'message_channels', '[]' ) );
 
-    $email = ( isset( $_REQUEST[ 'email' ] ) ) ? $_REQUEST[ 'email' ] : $_COOKIE[ 'iterableEndUserId' ];
-    $user = $iterable->user( $email );
+    ob_start();
+    require_once( dirname( __FILE__ ) . '/templates/subscription_options.php' );
+    $result = ob_get_contents();
+    ob_end_clean();
+    return $result;
+} );
+
+add_action( 'wp_ajax_getchannels', function() {
+    $iterable = new Iterable( get_option( 'api_key' ) );
+    $user = $iterable->user( $_REQUEST[ 'email' ] );
     $unsubscribed_ids = array();
     if( $user[ 'success' ] &&
         isset( $user[ 'content' ] ) &&
@@ -154,16 +164,8 @@ add_shortcode( 'subscription_options', function() {
             $unsubscribed_ids[ $i ] = true;
         }
     }
-
-    if( !$user[ 'success' ] ) {
-        trigger_error( $user[ 'error_message' ], E_USER_WARNING );
-    }
-
-    ob_start();
-    require_once( dirname( __FILE__ ) . '/templates/subscription_options.php' );
-    $result = ob_get_contents();
-    ob_end_clean();
-    return $result;
+    echo json_encode( $unsubscribed_ids );
+    die();
 } );
 
 add_action( 'wp_ajax_updatechannel', function() {
