@@ -144,7 +144,8 @@ add_shortcode( 'subscription_options', function() {
     $iterable = new Iterable( get_option( 'api_key' ) );
     $all_channels = json_decode( get_option( 'message_channels', '[]' ) );
 
-    $user = $iterable->user( $_REQUEST[ 'email' ] );
+    $email = ( isset( $_REQUEST[ 'email' ] ) ) ? $_REQUEST[ 'email' ] : $_COOKIE[ 'iterableEndUserId' ];
+    $user = $iterable->user( $email );
     $unsubscribed_ids = array();
     if( $user[ 'success' ] &&
         isset( $user[ 'content' ] ) &&
@@ -327,7 +328,6 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
 
                 // check for required checkbox
                 if( $feed[ 'meta' ][ 'require_checked' ] != '' && $entry[ $feed[ 'meta' ][ 'require_checked' ] ] == '' ) {
-                    trigger_error( 'Require checked test failed for ' . $feed[ 'meta' ][ 'require_checked' ] . print_r( $entry, true ), E_USER_WARNING );
                     continue;
                 }
 
