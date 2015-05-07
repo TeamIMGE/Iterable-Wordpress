@@ -16,6 +16,10 @@
                 <th scope='row'>Plugin Error Email</th>
                 <td><input type='text' name='error_email' value='<?= esc_attr( get_option( 'error_email' ) ); ?>' /></td>
             </tr>
+            <tr valign='top'>
+                <th scope='row'>Import Using External Site</th>
+                <td><input type='text' name='external_importer' value='<?= esc_attr( get_option( 'external_importer' ) ); ?>' /></td>
+            </tr>
         </table>
         <?php submit_button(); ?>
     </form>

@@ -23,6 +23,7 @@ add_action( 'admin_init', function() {
     // settings
     register_setting( 'iterable-settings', 'api_key' );
     register_setting( 'iterable-settings', 'listwise_key' );
+    register_setting( 'iterable-settings', 'external_importer' );
     register_setting( 'iterable-message-channels', 'message_channels' );
     register_setting( 'iterable-campaigns', 'campaigns' );
 } );
@@ -190,8 +191,7 @@ add_action( 'wp_ajax_updatechannel', function() {
 
 /* Import Users Action */
 
-add_action( 'wp_ajax_subscribe', function() {
-    $iterable = new Iterable( get_option( 'api_key' ) );
+function import_users( $iterable ) {
     $subscribers = json_decode( stripslashes( $_REQUEST[ 'subscribers' ] ), true );
     unset( $_REQUEST[ 'subscribers' ] );
     $list_id = $_REQUEST[ 'iterablelist' ];
@@ -263,6 +263,18 @@ add_action( 'wp_ajax_subscribe', function() {
     }
 
     die();
+}
+
+add_action( 'wp_ajax_nopriv_subscribe', function() {
+    if( isset( $_REQUEST[ 'api_key' ] ) ) {
+        $iterable = new Iterable( $_REQUEST[ 'api_key' ] );
+        import_users( $iterable );
+    }
+} );
+
+add_action( 'wp_ajax_subscribe', function() {
+    $iterable = new Iterable( get_option( 'api_key' ) );
+    import_users( $iterable );
 } );
 
 /* Gravityforms Integration */

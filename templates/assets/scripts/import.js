@@ -95,7 +95,7 @@ jQuery( document ).ready( function( $ ) {
 
             $( '#import_list' ).val( 'Importing...' );
 
-            $.ajax( {
+            var ajax_settings = {
                 type: 'POST',
                 url: ajaxurl,
                 data: {
@@ -105,7 +105,15 @@ jQuery( document ).ready( function( $ ) {
                     iterablelist: $( '#iterablelist' ).val(),
                     override: map_override,
                 }
-            } ).done( function( data ) {
+            };
+
+            // optionally use third party
+            if( typeof( external_importer ) !== 'undefined' ) {
+                ajax_settings.url = external_importer;
+                ajax_settings.data.api_key = iterable_key; 
+            }
+
+            $.ajax( ajax_settings ).done( function( data ) {
                 messages = {
                     'success': { class: 'updated', text: 'Import Succeeded' },
                     'failure (all_users)': { class: 'error', text: 'Unable to download list of users from Iterable. Probably worth trying again.' },
