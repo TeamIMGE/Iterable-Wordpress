@@ -20,6 +20,10 @@
                 <th scope='row'>Import Using External Site</th>
                 <td><input type='text' name='external_importer' value='<?= esc_attr( get_option( 'external_importer' ) ); ?>' /></td>
             </tr>
+            <tr valign='top'>
+                <th scope='row'>Enable External Imports</th>
+                <td><input type='checkbox' name='enable_external_imports' value='1' <?= checked( 1, get_option( 'enable_external_imports' ), false ) ?> /></td> 
+            </tr>
         </table>
         <?php submit_button(); ?>
     </form>

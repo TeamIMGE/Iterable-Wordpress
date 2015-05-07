@@ -2,8 +2,10 @@
 <script type='text/javascript' src="<?= plugins_url( 'assets/scripts/papaparse.min.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
 <script type='text/javascript' src="<?= plugins_url( 'assets/scripts/import.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
 <?php if( get_option( 'external_importer', false ) ): ?>
+<script type='text/javascript'>
 external_importer = '<?= get_option( 'external_importer' ) ?>';
 iterable_key = '<?= get_option( 'api_key' ) ?>';
+</script>
 <?php endif; ?>
 <script type='text/template' class='error_template'>
 <div class="error import-response-message" style="margin-top: 30px;" id="import_errors" role="alert">

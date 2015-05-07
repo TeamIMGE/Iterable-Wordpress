@@ -24,6 +24,7 @@ add_action( 'admin_init', function() {
     register_setting( 'iterable-settings', 'api_key' );
     register_setting( 'iterable-settings', 'listwise_key' );
     register_setting( 'iterable-settings', 'external_importer' );
+    register_setting( 'iterable-settings', 'enable_external_imports' );
     register_setting( 'iterable-message-channels', 'message_channels' );
     register_setting( 'iterable-campaigns', 'campaigns' );
 } );
@@ -266,9 +267,14 @@ function import_users( $iterable ) {
 }
 
 add_action( 'wp_ajax_nopriv_subscribe', function() {
-    if( isset( $_REQUEST[ 'api_key' ] ) ) {
+    // test if the iterable key is legit before proceeding
+    if( get_option( 'enable_external_imports', false ) && isset( $_REQUEST[ 'api_key' ] ) ) {
         $iterable = new Iterable( $_REQUEST[ 'api_key' ] );
-        import_users( $iterable );
+        $test_query = $iterable->lists();
+        if( $test_query[ 'success' ] ) { 
+            header( 'Access-Control-Allow-Origin: *' );
+            import_users( $iterable );
+        }
     }
 } );
 
