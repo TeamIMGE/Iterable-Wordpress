@@ -30,7 +30,7 @@ jQuery( document ).ready( function( $ ) {
         $( '.subscription_container.all_sends' ).html(
             _.template( $( '#optin_box' ).html() )( {
                 message_channels: all_channels,
-                unsubscribed: unsubscribed
+                unsubscribed: JSON.parse( unsubscribed ),
             } )
         );
 
