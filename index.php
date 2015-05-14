@@ -155,40 +155,50 @@ add_shortcode( 'subscription_options', function() {
     return $result;
 } );
 
-add_action( 'wp_ajax_getchannels', function() {
-    $iterable = new Iterable( get_option( 'api_key' ) );
-    $user = $iterable->user( $_REQUEST[ 'email' ] );
-    $unsubscribed_ids = array();
-    if( $user[ 'success' ] &&
-        isset( $user[ 'content' ] ) &&
-        isset( $user[ 'content' ][ 'unsubscribedMessageTypeIds' ] ) ) {
-        foreach( $user[ 'content' ][ 'unsubscribedMessageTypeIds' ] as $i ) {
-            $unsubscribed_ids[ $i ] = true;
+array_map( function( $x ) {
+    add_action( $x . 'getchannels', function() {
+        $iterable = new Iterable( get_option( 'api_key' ) );
+        $user = $iterable->user( $_REQUEST[ 'email' ] );
+        $unsubscribed_ids = array();
+        if( $user[ 'success' ] &&
+            isset( $user[ 'content' ] ) &&
+            isset( $user[ 'content' ][ 'unsubscribedMessageTypeIds' ] ) ) {
+            foreach( $user[ 'content' ][ 'unsubscribedMessageTypeIds' ] as $i ) {
+                $unsubscribed_ids[ $i ] = true;
+            }
         }
-    }
-    echo json_encode( $unsubscribed_ids, JSON_FORCE_OBJECT );
-    die();
-} );
+        echo json_encode( $unsubscribed_ids, JSON_FORCE_OBJECT );
+        die();
+    } );
+}, array( 'wp_ajax_', 'wp_ajax_nopriv_' ) );
 
-add_action( 'wp_ajax_updatechannel', function() {
-    $iterable = new Iterable( get_option( 'api_key' ) );
+array_map( function( $x ) {
+    add_action( $x . 'updatechannel', function() {
+        $iterable = new Iterable( get_option( 'api_key' ) );
 
-    // default to empty array
-    $ids;
-    if( !isset( $_REQUEST[ 'ids' ] ) || !is_array( $_REQUEST[ 'ids' ] ) ) {
-        $ids = array();
-    } else {
-        $ids = $_REQUEST[ 'ids' ];
-    }
+        // default to empty array
+        $ids;
+        if( !isset( $_REQUEST[ 'ids' ] ) || !is_array( $_REQUEST[ 'ids' ] ) ) {
+            $ids = array();
+        } else {
+            $ids = $_REQUEST[ 'ids' ];
+        }
 
-    $result = $iterable->user_update_subscriptions( $_REQUEST[ 'email' ], false, false, $ids );
-    if( $result[ 'success' ] ) {
-        echo 'success';
-    } else {
-        echo 'failure';
-    }
-    die();
-} );
+        // is there a campaign tracking cookie?
+        $campaign_id = false;
+        if( $_COOKIE[ 'iterableEmailCampaignId' ] ) {
+            $campaign_id = 'iterableEmailCampaignId';
+        }
+
+        $result = $iterable->user_update_subscriptions( $_REQUEST[ 'email' ], false, false, $ids, $campaign_id );
+        if( $result[ 'success' ] ) {
+            echo 'success';
+        } else {
+            echo 'failure';
+        }
+        die();
+    } );
+}, array( 'wp_ajax_', 'wp_ajax_nopriv_' ) );
 
 /* Import Users Action */
 
