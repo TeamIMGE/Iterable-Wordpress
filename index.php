@@ -187,7 +187,7 @@ array_map( function( $x ) {
         // is there a campaign tracking cookie?
         $campaign_id = false;
         if( $_COOKIE[ 'iterableEmailCampaignId' ] ) {
-            $campaign_id = 'iterableEmailCampaignId';
+            $campaign_id = $_COOKIE[ 'iterableEmailCampaignId' ];
         }
 
         $result = $iterable->user_update_subscriptions( $_REQUEST[ 'email' ], false, false, $ids, $campaign_id );
@@ -195,6 +195,7 @@ array_map( function( $x ) {
             echo 'success';
         } else {
             echo 'failure';
+            trigger_error( 'Subsupdate Failure' . print_r( $result, true ), E_USER_WARNING );
         }
         die();
     } );
