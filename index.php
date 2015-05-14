@@ -417,8 +417,8 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
             $body = json_decode( wp_remote_retrieve_body( $result ) );
 
             // email not clean
-            if( isset( $body->email_status ) && $body->email_status !== 'clean' ) {
-                trigger_error( 'Iterable: skipping email as unclean', E_USER_WARNING );
+            $valid_responses = array( 'clean', 'catch-all', 'unknown', 'processing' );
+            if( isset( $body->email_status ) && in_array( $body->email_status, $valid_responses ) ) {
                 return false;
             }
 
