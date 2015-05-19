@@ -3,12 +3,12 @@
 Plugin Name: Wordpress Iterable Add-On
 Plugin URI: http://www.imge.com
 Description: Iterable integration for Wordpress.
-Version: 4.2.3
+Version: 4.2.4
 Author: Chris Lewis
 Author URI: http://www.imge.com
 */
 
-define( 'VERSION', '4.2.3' );
+define( 'VERSION', '4.2.4' );
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
@@ -120,8 +120,6 @@ add_action( 'iterablecampaignshook', function() {
             }
         }
         unset( $c );
-    } else {
-        trigger_error( 'Campaigns is null', E_USER_WARNING );
     }
 } );
 
@@ -422,6 +420,7 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
             // email not clean
             $valid_responses = array( 'clean', 'catch-all', 'unknown', 'processing' );
             if( isset( $body->email_status ) && !in_array( $body->email_status, $valid_responses ) ) {
+                trigger_error( 'Email not clean' . print_r( $body ) );
                 return false;
             }
 
