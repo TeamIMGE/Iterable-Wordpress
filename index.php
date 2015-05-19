@@ -73,7 +73,6 @@ register_activation_hook( __FILE__, function() {
 } );
 
 add_action( 'iterablecampaignshook', function() {
-    trigger_error( 'Iterable Campaigns Hook: Start >> ' . time(), E_USER_WARNING );
     $campaigns = json_decode( get_option( 'campaigns' ), true );
     $one_hour = 60 * 60;
     $one_day = $one_hour * 24;
@@ -88,7 +87,6 @@ add_action( 'iterablecampaignshook', function() {
 
             // Has this happened already today?
             if( isset( $c[ 'last_send' ] ) && date( 'd', time() ) == date( 'd', $c[ 'last_send' ] ) ) {
-                trigger_error( 'Send has already occurred today', E_USER_WARNING );
                 continue;
             }
 
@@ -100,9 +98,7 @@ add_action( 'iterablecampaignshook', function() {
 
             // Is it time for the send today?
             if( time() >= $send_time - $one_hour && time() <= $send_time ) {
-                trigger_error( 'Trigger send time for ' . date( 'Y-m-d H:i:s', $send_time ), E_USER_WARNING );
                 $iterable = new Iterable( get_option( 'api_key' ) );
-                trigger_error( 'send_at ' . $c[ 'send_at' ] . ' send time ' . $send_time, E_USER_WARNING );
                 $result = $iterable->campaigns_create(
                     $c[ 'name' ],
                     $c[ 'list_id' ],
@@ -115,14 +111,11 @@ add_action( 'iterablecampaignshook', function() {
                     trigger_error( 'Error sending campaign' . print_r( $result, true ), E_USER_WARNING );
                 }
 
-                trigger_error( 'iterable campaigns create >>> ' . print_r( $result, true ), E_USER_WARNING );
-
                 $c[ 'last_send' ] = time();
                 $changed = true;
-            }  else {
-                trigger_error( 'Not send time yet >> ' . print_r( $c, true ) . ' >> ' . $send_time . ' >> ' . time(), E_USER_WARNING );
             }
-if( $changed ) {
+
+            if( $changed ) {
                 update_option( 'campaigns', json_encode( $campaigns ) );
             }
         }
@@ -346,7 +339,7 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
             $feeds = IterableData::get_feed_by_form( $form[ 'id' ] );
 
             if( !$feeds ) {
-                trigger_error( 'Iterable: no feeds found' );
+                trigger_error( 'Iterable: no feeds found', E_USER_WARNING );
                 return;
             }
 
@@ -383,7 +376,6 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
                     try {
                         $cleaned_email = $this->listwise_validate( $subscriber[ 'email' ] );
                         if( !$cleaned_email ) {
-                            trigger_error( 'Iterable: email rejected by listwise' );
                             continue;
                         }
 
@@ -429,7 +421,7 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
 
             // email not clean
             $valid_responses = array( 'clean', 'catch-all', 'unknown', 'processing' );
-            if( isset( $body->email_status ) && in_array( $body->email_status, $valid_responses ) ) {
+            if( isset( $body->email_status ) && !in_array( $body->email_status, $valid_responses ) ) {
                 return false;
             }
 
