@@ -323,9 +323,8 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
                     }
 
                     // override disabled and a valid non-empty field exists
-                    if( !$value && isset( $existing_user[ 'content' ][ $key ] ) && $existing_user[ 'content' ][ 'key ' ] !== '' ) {
+                    if( !$value && isset( $existing_user[ 'content' ][ $key ] ) && $existing_user[ 'content' ][ $key ] !== '' ) {
                         unset( $subscriber[ 'dataFields' ][ $key ] );
-                        
                     }
                 }
 
