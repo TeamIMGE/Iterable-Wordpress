@@ -24,7 +24,7 @@
 <% } ); %>
 </script>
 <script type='text/javascript'>
-<?php $user_fields = $iterable->user_fields(); ?>
+<?php $user_fields = filtered_user_fields( $iterable ); ?>
 <?php if( $user_fields[ 'success' ] ): ?>
 iterable_fields = <?= json_encode( $user_fields[ 'content' ] ) ?>;
 <?php endif; ?>

@@ -12,7 +12,7 @@ define( 'VERSION', '4.2.4' );
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
-
+require_once( dirname( __FILE__ ) . '/iterable_helper.php' );
 
 if( is_admin() ) {
     require_once( dirname( __FILE__ ) . '/Update/BFIGitHubPluginUploader.php' );
@@ -27,6 +27,7 @@ add_action( 'admin_init', function() {
     register_setting( 'iterable-settings', 'enable_external_imports' );
     register_setting( 'iterable-message-channels', 'message_channels' );
     register_setting( 'iterable-campaigns', 'campaigns' );
+    register_setting( 'iterable-supress-fields', 'iterable-supress-fields' );
 } );
 
 add_action( 'admin_menu', function() {
@@ -50,6 +51,10 @@ add_action( 'admin_menu', function() {
     add_submenu_page( 'iterable', 'Campaigns', 'Campaigns', 'manage_options', 'iterable_campaigns', function() {
         $iterable = new Iterable( get_option( 'api_key' ) );
         require_once( dirname( __FILE__ ) . '/templates/campaigns.php' );
+    } );
+    add_submenu_page( 'iterable', 'Fields', 'Fields', 'manage_options', 'iterable_fields', function() {
+        $iterable = new Iterable( get_option( 'api_key' ) );
+        require_once( dirname( __FILE__ ) . '/templates/fields.php' );
     } );
     add_submenu_page( 'iterable', 'Settings', 'Settings', 'manage_options', 'iterable_settings', function() {
         require_once( dirname( __FILE__ ) . '/templates/settings.php' );
