@@ -139,7 +139,11 @@ add_action( 'wp_enqueue_scripts', function() {
     wp_register_script( 'subscription_page', plugins_url( '/templates/assets/scripts/subscription_options.js', __FILE__ ), array( 'jquery.cookie' ), '', true );
 } );
 
-add_shortcode( 'subscription_options', function() {
+add_shortcode( 'subscription_options', function( $atts ) {
+    $atts = shortcode_atts( array(
+        'nochannels_message' => "You aren't subscribed to any channels."
+    ), $atts );
+
     wp_enqueue_script( 'subscription_page' );
 
     $all_channels = json_decode( get_option( 'message_channels', '[]' ) );

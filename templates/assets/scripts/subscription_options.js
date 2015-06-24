@@ -46,9 +46,9 @@ jQuery( document ).ready( function( $ ) {
         } ).get().join( ', ' );
 
         if( subscribe_list === '' ) {
-            $( '.subscription_options' ).addClass( 'show_koala' );
+            $( '.nochannels_message' ).show();
         } else {
-            $( '.subscription_options' ).removeClass( 'show_koala' );
+            $( '.nochannels_message' ).hide();
         }
 
         $( '.subscribed_sends' ).html( subscribe_list );

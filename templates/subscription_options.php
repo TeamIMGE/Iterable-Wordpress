@@ -30,7 +30,7 @@
                     <h2>Sends You've Subscribed To</h2>
                     <i class='fa fa-spinner fa-spin loading' style='font-size: 40px; margin: 10px;'></i>
                     <p class='subscribed_sends'></p>
-                    <img class='sad_koala' src='<?= plugins_url( 'assets/sad_koala.png', __FILE__ ) ?>' caption='sad koala' />
+                    <div style='display: none;' class='nochannels_message'><?= $atts[ 'nochannels_message' ] ?></div>
                     <button class='btn btn-primary' id='save_changes'>Save Changes</button>
                     <input type='submit' style='display: none;' />
                 </div>
