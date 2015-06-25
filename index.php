@@ -144,6 +144,7 @@ add_shortcode( 'subscription_options', function( $atts ) {
         'nochannels_message' => "You aren't subscribed to any channels."
     ), $atts );
 
+    wp_enqueue_script( 'underscore', plugins_url( '/templates/assets/scripts/underscore.js', __FILE__ ) );
     wp_enqueue_script( 'subscription_page' );
 
     $all_channels = json_decode( get_option( 'message_channels', '[]' ) );
