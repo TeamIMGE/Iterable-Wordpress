@@ -3,12 +3,12 @@
 Plugin Name: Wordpress Iterable Add-On
 Plugin URI: http://www.imge.com
 Description: Iterable integration for Wordpress.
-Version: 4.2.7
+Version: 4.2.8
 Author: Chris Lewis
 Author URI: http://www.imge.com
 */
 
-define( 'VERSION', '4.2.7' );
+define( 'VERSION', '4.2.8' );
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
@@ -25,6 +25,7 @@ add_action( 'admin_init', function() {
     register_setting( 'iterable-settings', 'listwise_key' );
     register_setting( 'iterable-settings', 'external_importer' );
     register_setting( 'iterable-settings', 'enable_external_imports' );
+    register_setting( 'iterable-settings', 'disable_gravityforms_warning' );
     register_setting( 'iterable-message-channels', 'message_channels' );
     register_setting( 'iterable-campaigns', 'campaigns' );
     register_setting( 'iterable-supress-fields', 'iterable-supress-fields' );
@@ -472,6 +473,8 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
     new GFSimpleAddOn();
 } else {
     add_action( 'admin_notices', function() {
-        echo '<div class="error"><p>Cannot load Iterable plugin. GravityForms is either not installed or needs to be updated.</p></div>';
+        if( get_option( 'disable_gravityforms_warning' ) !== '1' ) {
+            echo '<div class="error"><p>Iterable plugin cannot find Gravityforms. Feed processing is disabled.</p></div>';
+        }
     } );
 }
