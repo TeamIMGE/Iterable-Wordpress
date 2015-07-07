@@ -57,7 +57,7 @@ iterable_fields = <?= json_encode( $user_fields[ 'content' ] ) ?>;
 				<select name='iterablelist' id='iterablelist'>
 					<option></option>
 					<?php foreach( $iterable_lists[ 'content' ] as $l ): ?>
-					<option value='<?= $l[ 'id' ] ?>'><?= $l[ 'name' ] ?></option>
+                    <option value='<?= $l[ 'id' ] ?>'><?= $l[ 'name' ] ?> (<?= $l[ 'size' ] ?>)</option>
 					<?php endforeach; ?>
 				</select>
 				<?php else: ?>

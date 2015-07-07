@@ -30,22 +30,26 @@ if( !class_exists( 'IterableData' ) ) {
 			return $wpdb->prefix . "rg_iterable";
 		}
 
-		public static function get_feeds(){
+		public static function get_feeds() {
 			global $wpdb;
-			$table_name = self::get_iterable_table_name();
-			$form_table_name = RGFormsModel::get_form_table_name();
-			$sql = "SELECT s.id, s.is_active, s.form_id, s.meta, f.title as form_title
-			FROM $table_name s
-			INNER JOIN $form_table_name f ON s.form_id = f.id";
+            if( class_exists( 'RGFormsModel' ) ) {
+                $table_name = self::get_iterable_table_name();
+                $form_table_name = RGFormsModel::get_form_table_name();
+                $sql = "SELECT s.id, s.is_active, s.form_id, s.meta, f.title as form_title
+                FROM $table_name s
+                INNER JOIN $form_table_name f ON s.form_id = f.id";
 
-			$results = $wpdb->get_results($sql, ARRAY_A);
+                $results = $wpdb->get_results($sql, ARRAY_A);
 
-			$count = sizeof($results);
-			for($i=0; $i<$count; $i++){
-				$results[$i]["meta"] = maybe_unserialize($results[$i]["meta"]);
-			}
+                $count = sizeof($results);
+                for($i=0; $i<$count; $i++){
+                    $results[$i]["meta"] = maybe_unserialize($results[$i]["meta"]);
+                }
 
-			return $results;
+                return $results;
+            } else {
+                return [];
+            }
 		}
 
 		public static function delete_feed($id){

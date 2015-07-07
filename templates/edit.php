@@ -4,6 +4,7 @@
 		$feed = IterableData::get_feed( $_REQUEST[ 'id' ] );	
 	}
 ?>
+<?php if( class_exists( 'RGFormsModel' ) ): ?>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 <script type='text/javascript' src="<?= plugins_url( 'assets/scripts/underscore.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
 <script type='text/javascript' src="<?= plugins_url( 'assets/scripts/edit.js', __FILE__ ) ?>?v=<?= VERSION ?>"></script>
@@ -94,3 +95,6 @@ feed = <?= json_encode( $feed ) ?>;
 		<a href='<?= admin_url( 'admin.php?page=iterable_feed' ) ?>' class='button'>Back</a>
 	</div>
 </form>
+<?php else: ?>
+<p>You cannot add a feed until Gravityforms is enabled.</p>
+<?php endif; ?>
