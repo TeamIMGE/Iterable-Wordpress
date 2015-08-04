@@ -14,7 +14,16 @@
     </div>
 <% } ); %>
 </script>
+<script type='text/template' id='error_box'>
+<h2>Oops!</h2>
+<% if( email != "" ) { %>
+<p>Sorry, we're having trouble working out what your email address is. Please send an email to <a href="mailto:<%= email %>?subject=Unsubscribe-<%= website %>"><%= email %></a> and we'll unsubscribe you as soon as possible.</p> 
+<% } else { %>
+<p>Sorry, we're having technical difficulties and are unable to unsubscribe you at this time.</p>
+<% } %>
+</script>
 <div class='container subscription_options'>
+    <input type='hidden' id='fallback' value='<?= base64_encode( get_option( 'error_email' ) ) ?>' />
     <form method='post' action='<?= admin_url( 'admin-ajax.php' ); ?>'>
         <input type='hidden' name='email' id='email' value='<?= $_REQUEST[ 'email' ] ?>' />
         <input type='hidden' name='list' id='list' value='<?= $_REQUEST[ 'list' ] ?>' />

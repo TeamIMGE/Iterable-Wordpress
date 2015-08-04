@@ -3,12 +3,12 @@
 Plugin Name: Wordpress Iterable Add-On
 Plugin URI: http://www.imge.com
 Description: Iterable integration for Wordpress.
-Version: 4.2.9
+Version: 4.3.0
 Author: Chris Lewis
 Author URI: http://www.imge.com
 */
 
-define( 'VERSION', '4.2.9' );
+define( 'VERSION', '4.3.0' );
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
@@ -20,14 +20,15 @@ if( is_admin() ) {
 }
 
 add_action( 'admin_init', function() {
-    // settings
     register_setting( 'iterable-settings', 'api_key' );
     register_setting( 'iterable-settings', 'listwise_key' );
     register_setting( 'iterable-settings', 'external_importer' );
     register_setting( 'iterable-settings', 'enable_external_imports' );
     register_setting( 'iterable-settings', 'disable_gravityforms_warning' );
+    register_setting( 'iterable-settings', 'error_email' );
     register_setting( 'iterable-message-channels', 'message_channels' );
     register_setting( 'iterable-campaigns', 'campaigns' );
+    register_setting( 'iterable-workflows', 'workflows' );
     register_setting( 'iterable-supress-fields', 'iterable-supress-fields' );
 } );
 
@@ -53,6 +54,10 @@ add_action( 'admin_menu', function() {
         $iterable = new Iterable( get_option( 'api_key' ) );
         require_once( dirname( __FILE__ ) . '/templates/campaigns.php' );
     } );
+    add_submenu_page( 'iterable', 'Workflows', 'Workflows', 'manage_options', 'iterable_workflows', function() {
+        $iterable = new Iterable( get_option( 'api_key' ) );
+        require_once( dirname( __FILE__ ) . '/templates/workflows.php' );
+    } );
     add_submenu_page( 'iterable', 'Fields', 'Fields', 'manage_options', 'iterable_fields', function() {
         $iterable = new Iterable( get_option( 'api_key' ) );
         require_once( dirname( __FILE__ ) . '/templates/fields.php' );
@@ -75,6 +80,9 @@ add_filter( 'cron_schedules', function( $interval ) {
 register_activation_hook( __FILE__, function() {
     if( !wp_next_scheduled( 'iterablecampaignshook' ) ) {
         wp_schedule_event( time(), 'minutes_10', 'iterablecampaignshook' );
+    }
+    if( !wp_next_scheduled( 'iterableworkflowshook' ) ) {
+        wp_schedule_event( time(), 'daily', 'iterableworkflowshook' );
     }
 } );
 
@@ -129,8 +137,20 @@ add_action( 'iterablecampaignshook', function() {
     }
 } );
 
+add_action( 'iterableworkflowshook', function() {
+    $iterable = new Iterable( get_option( 'api_key' ) );
+    $workflows = json_decode( get_option( 'workflows' ), true );
+    foreach( $workflows as $workflow ) {
+        $result = $iterable->trigger_workflow( false, $workflow[ 'workflow_id' ], false, $workflow[ 'list_id' ] );
+        if( !$result[ 'success' ] ) {
+            trigger_error( 'Processing workflow failed' . print_r( $result, true ), E_USER_WARNING );
+        }
+    }
+} );
+
 register_deactivation_hook( __FILE__, function() {
     wp_clear_scheduled_hook( 'iterablecampaignshook' );
+    wp_clear_scheduled_hook( 'iterableworkflowshook' );
 } );
 
 /* Manage Message Channels */
@@ -430,7 +450,7 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
             // email not clean
             $valid_responses = array( 'clean', 'catch-all', 'unknown', 'processing' );
             if( isset( $body->email_status ) && !in_array( $body->email_status, $valid_responses ) ) {
-                trigger_error( 'Email not clean' . print_r( $body ) );
+                trigger_error( 'Email not clean' . print_r( $body, true ) );
                 return false;
             }
 

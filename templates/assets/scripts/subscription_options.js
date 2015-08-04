@@ -17,7 +17,12 @@ jQuery( document ).ready( function( $ ) {
         email = $.cookie( 'iterableEndUserId' );
     }
     if( !email ) {
-        $( '.subscription_container.all_sends' ).html( '<h2>Error: Email not found</h2>' );
+        $( '.subscription_options' ).html(
+            _.template( $( '#error_box' ).html() )( {
+                email: atob( $( '#fallback' ).val() ),
+                website: encodeURIComponent( document.URL ),
+            } )
+        );
         return;
     } else {
         $( '#email' ).val( email );

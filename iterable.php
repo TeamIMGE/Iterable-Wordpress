@@ -4,9 +4,7 @@
  *
  */
 
-if( class_exists( 'Iterable' ) ) {
-    return;
-} else {
+if( !class_exists( 'Iterable' ) ) {
     class Iterable {
         private $api_key = '';
         private $api_url = 'https://api.iterable.com:443/api/';
@@ -180,8 +178,8 @@ if( class_exists( 'Iterable' ) ) {
 
         /* Events */
 
-        public function event_track( $email, $event_name, $created_at = false,
-            $data_fields = false, $user_id = false ) {
+        public function event_track( $email, $event_name, $created_at = false, $data_fields = false,
+            $user_id = false, $campaign_id = false, $template_id = false ) {
             $request = array(
                 'email' => $email,
                 'eventName' => $event_name,
@@ -189,8 +187,10 @@ if( class_exists( 'Iterable' ) ) {
 
             $this->set_optionals( $request, array(
                 'createdAt' => (int) $created_at,
-                'dataFieds' => $data_fields,
-                'user_id' => $user_id
+                'dataFields' => $data_fields,
+                'user_id' => $user_id,
+                'campaignId' => (int) $campaign_id,
+                'templateId' => (int) $template_id,
             ) );
 
             return $this->send_request( 'events/track',
@@ -446,8 +446,20 @@ if( class_exists( 'Iterable' ) ) {
 
         /* Workflows */
 
-        public function trigger_workflow() {
-            throw new Exception( 'Not yet implemented' );
+        public function trigger_workflow( $email = false, $workflow_id, $data_fields = false, $list_id = false ) {
+            $request = array(
+                'workflowId' => $workflow_id,
+            );
+
+            $this->set_optionals( $request, array(
+                'email' => $email,
+                'listId' => $list_id,
+                'dataFields' => $data_fields
+            ) );
+
+            $result = $this->send_request( 'workflows/triggerWorkflow',
+                json_encode( $request ), 'POST' );
+            return $result;
         }
     }
 }
