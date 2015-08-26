@@ -1,3 +1,9 @@
+<?php
+    $ajax_url = admin_url( 'admin-ajax.php' );
+    if( defined( 'MGA_AJAX_ALT' ) && MGA_AJAX_ALT == true ) {
+        $ajax_url = site_url( 'frontend-ajax.php' );
+    }
+?>
 <script type='text/javascript'>all_channels = <?= json_encode( $all_channels ) ?>;</script>
 <script type='text/template' id='optin_box'>
 <h2>All of our Sends</h2>
