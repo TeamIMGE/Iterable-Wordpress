@@ -30,7 +30,7 @@
 </script>
 <div class='container subscription_options'>
     <input type='hidden' id='fallback' value='<?= base64_encode( get_option( 'error_email' ) ) ?>' />
-    <form method='post' action='<?= admin_url( 'admin-ajax.php' ); ?>'>
+    <form method='post' action='<?= $ajax_url ?>'>
         <input type='hidden' name='email' id='email' value='<?= $_REQUEST[ 'email' ] ?>' />
         <input type='hidden' name='list' id='list' value='<?= $_REQUEST[ 'list' ] ?>' />
         <div class='row'>
