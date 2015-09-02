@@ -3,12 +3,12 @@
 Plugin Name: Wordpress Iterable Add-On
 Plugin URI: http://www.imge.com
 Description: Iterable integration for Wordpress.
-Version: 4.3.0
+Version: 4.3.1
 Author: Chris Lewis
 Author URI: http://www.imge.com
 */
 
-define( 'VERSION', '4.3.0' );
+define( 'VERSION', '4.3.1' );
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
@@ -250,23 +250,27 @@ function import_users( $iterable ) {
     $header = str_getcsv( array_shift( $all_users ) );
     $email_hashtable = array();
     foreach( $all_users as $index => $user ) {
-        $entry = array_combine( $header, str_getcsv( $user ) );
-        if( $entry === false ) {
-            trigger_error( $user, E_USER_WARNING );
-        }
+        if( count( $user ) == 0 ) {
+            trigger_error( 'Empty row, skipping' );
+        } else {
+            $entry = array_combine( $header, str_getcsv( $user ) );
 
-        if( $entry !== false ) {
-            $email = $entry[ 'email' ];
-            unset( $entry[ 'email' ] );
+            if( $entry === false ) {
+                trigger_error( $user, E_USER_WARNING );
+            } else {
+                $email = $entry[ 'email' ];
+                unset( $entry[ 'email' ] );
 
-            $email_hashtable[ $entry[ 'email' ] ] = gzcompress( json_encode( $entry ) );
+                $email_hashtable[ $entry[ 'email' ] ] = gzcompress( json_encode( $entry ) );
+            }
         }
 
         unset( $user, $all_users[ $index ] );
     }
-
+    
     // unset duplicated subscriber information
     foreach( $subscribers as &$subscriber ) {
+        // subscriber not in hashtable
         if( !isset( $email_hashtable[ $subscriber[ 'email' ] ] ) ) {
             continue;
         }
@@ -291,6 +295,7 @@ function import_users( $iterable ) {
 
     if( $response[ 'success' ] ) {
         echo 'success';
+        trigger_error( print_r( $response, true ), E_USER_WARNING );
     } else {
         trigger_error( print_r( $response, true ), E_USER_WARNING );
         echo 'fail (list_subscribe)';

@@ -43,60 +43,63 @@ iterable_fields = <?= json_encode( $user_fields[ 'content' ] ) ?>;
 <?php endif; ?>
 </script>
 <form method='post'>
-	<input type='hidden' name='feed_id' id='feed_id' value='<?= ( isset( $_REQUEST[ 'id' ] ) ) ? $_REQUEST[ 'id' ] : 0 ?>' />
-	<table class='form-table'>
+    <input type='hidden' name='feed_id' id='feed_id' value='<?= ( isset( $_REQUEST[ 'id' ] ) ) ? $_REQUEST[ 'id' ] : 0 ?>' />
+    <table class='form-table'>
         <tr valign='top'>
             <th scope='row'><label for='csv' class='left_header'>CSV File</label></th>
-            <td><input type='file' id='csv' label='csv' accept=".csv" /></td>
+            <td>
+                <input type='file' id='csv' label='csv' accept=".csv" />
+                <p id="rows_found"></p>
+            </td>
         </tr>
-		<tr valign='top'>
-			<th scope='row'><label for='list' class='left_header'>Iterable List</label></th>
-			<td>
-				<?php $iterable_lists = $iterable->lists(); ?>
-				<?php if( $iterable_lists[ 'success' ] ): ?>
-				<select name='iterablelist' id='iterablelist'>
-					<option></option>
-					<?php foreach( $iterable_lists[ 'content' ] as $l ): ?>
-                    <option value='<?= $l[ 'id' ] ?>'><?= $l[ 'name' ] ?> (<?= $l[ 'size' ] ?>)</option>
-					<?php endforeach; ?>
-				</select>
-				<?php else: ?>
-				<p style='font-weight: bold; color: red'>Error accessing Iterable. Check API key.</p>	
-				<?php endif; ?>
-			</td>
-		</tr>
-		<tr valign='top'>
-			<th scope='row'><label for='mapfields'>Map Fields</label></th>
-			<td>
-				<table>
-					<tr>
-						<th style='padding-top: 0px;'>Form Fields</th>
-						<th style='padding-top: 0px;'>List Fields</th>
-                        <th style='padding-top: 0px;'>Override Existing Value?</th>
-					</tr>
-					<tbody id='map'>
-					</tbody>
-	            </table>
-			</td>
-		</tr>
         <tr valign='top'>
-			<th scope='row'><label>Attribution</label></th>
+            <th scope='row'><label for='list' class='left_header'>Iterable List</label></th>
+            <td>
+                <?php $iterable_lists = $iterable->lists(); ?>
+                <?php if( $iterable_lists[ 'success' ] ): ?>
+                <select name='iterablelist' id='iterablelist'>
+                    <option></option>
+                    <?php foreach( $iterable_lists[ 'content' ] as $l ): ?>
+                    <option value='<?= $l[ 'id' ] ?>'><?= $l[ 'name' ] ?> (<?= $l[ 'size' ] ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+                <?php else: ?>
+                <p style='font-weight: bold; color: red'>Error accessing Iterable. Check API key.</p>   
+                <?php endif; ?>
+            </td>
+        </tr>
+        <tr valign='top'>
+            <th scope='row'><label for='mapfields'>Map Fields</label></th>
             <td>
                 <table>
                     <tr>
-			            <td><input type='text' name='source' id='source' placeholder='Source' /></td>
-			            <td><input type='text' name='campaign' id='campaign' placeholder='Campaign' /></td>
-			            <td><input type='text' name='medium' id='medium' placeholder='Medium' /></td>
+                        <th style='padding-top: 0px;'>Form Fields</th>
+                        <th style='padding-top: 0px;'>List Fields</th>
+                        <th style='padding-top: 0px;'>Override Existing Value?</th>
+                    </tr>
+                    <tbody id='map'>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr valign='top'>
+            <th scope='row'><label>Attribution</label></th>
+            <td>
+                <table>
+                    <tr>
+                        <td><input type='text' name='source' id='source' placeholder='Source' /></td>
+                        <td><input type='text' name='campaign' id='campaign' placeholder='Campaign' /></td>
+                        <td><input type='text' name='medium' id='medium' placeholder='Medium' /></td>
                     </tr>
                 </table>
             </td>
         </tr>
-		<tr valign='top'>
-			<th scope='row'><label for='resubscribe'>Resubscribe</label></th>
-			<td><input type='checkbox' name='resubscribe' id='resubscribe' /></td>
-		</tr>
-	</table>
-	<div>
-		<input type='submit' value='Import' id='import_list' class='button-primary' />
-	</div>
+        <tr valign='top'>
+            <th scope='row'><label for='resubscribe'>Resubscribe</label></th>
+            <td><input type='checkbox' name='resubscribe' id='resubscribe' /></td>
+        </tr>
+    </table>
+    <div>
+        <input type='submit' value='Import' id='import_list' class='button-primary' />
+    </div>
 </form>

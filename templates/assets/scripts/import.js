@@ -9,6 +9,7 @@ jQuery( document ).ready( function( $ ) {
                 complete: function( results, file ) {
                     window.csv_data = results;
                     window.csv_fields = window.csv_data.meta.fields ;
+                    $( '#rows_found' ).html( window.csv_data.data.length + ' rows detected' );
                     $( '#map' ).html( _.template( $( '.csv_field_template' ).html() ) );
                 }
             },
