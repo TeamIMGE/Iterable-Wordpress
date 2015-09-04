@@ -31,8 +31,15 @@
 <div class='container subscription_options'>
     <input type='hidden' id='fallback' value='<?= base64_encode( get_option( 'error_email' ) ) ?>' />
     <form method='post' action='<?= $ajax_url ?>'>
-        <input type='hidden' name='email' id='email' value='<?= $_REQUEST[ 'email' ] ?>' />
         <input type='hidden' name='list' id='list' value='<?= $_REQUEST[ 'list' ] ?>' />
+        <div class='row'>
+            <div class='col-md-12'>
+                <div class='form-group'>
+                    <label for='email'>Email Address</label>
+                    <input class='form-control' id='email' type='text' name='email' value='<?= $_REQUEST[ 'email' ] ?>' />
+                </div>
+            </div>
+        </div>
         <div class='row'>
             <div class='col-md-4'>
                 <div class='subscription_container all_sends'>
