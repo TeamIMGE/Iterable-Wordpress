@@ -10,13 +10,31 @@ jQuery( document ).ready( function( $ ) {
         return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
     }
 
-    // Get user data
-
-    var email = get_parameter( 'email' );
-    if( email === '' ) {
-        email = $.cookie( 'iterableEndUserId' );
+    function get_hash( variable ) {
+        var query = window.location.hash;
+        query = query.replace( '#', '' );
+        var pairs = query.split( '&' );
+        for( var i = 0; i < pairs.length; i++ ) {
+            var pair = pairs[ i ].split( '=' );
+            if( decodeURIComponent( pair[ 0 ] ) === variable ) {
+                return decodeURIComponent( pair[ 1 ] );
+            }
+        }
+        return '';
     }
-    if( !email ) {
+
+    // Get user data
+    var query_email = get_parameter( 'email' );
+    var hash_email = get_hash( 'email' );
+    var cookie_email = $.cookie( 'iterableEndUserId' );
+
+    if( query_email !== '' ) {
+        email = query_email;
+    } else if( hash_email !== '' ) {
+        email = hash_email;
+    } else if( cookie_email != undefined ) {
+        email = cookie_email;
+    } else {
         $( '.subscription_options' ).html(
             _.template( $( '#error_box' ).html() )( {
                 email: atob( $( '#fallback' ).val() ),
@@ -24,9 +42,9 @@ jQuery( document ).ready( function( $ ) {
             } )
         );
         return;
-    } else {
-        $( '#email' ).val( email );
     }
+
+    $( '#email' ).val( email );
 
     $.get( $( '.subscription_options form' ).attr( 'action' ), {
         action: 'getchannels',
