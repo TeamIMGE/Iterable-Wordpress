@@ -3,12 +3,12 @@
 Plugin Name: Wordpress Iterable Add-On
 Plugin URI: http://www.imge.com
 Description: Iterable integration for Wordpress.
-Version: 4.3.2
+Version: 4.3.4
 Author: Chris Lewis
 Author URI: http://www.imge.com
 */
 
-define( 'VERSION', '4.3.3' );
+define( 'VERSION', '4.3.4' );
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
@@ -40,26 +40,26 @@ add_action( 'admin_menu', function() {
         require_once( dirname( __FILE__ ) . '/templates/list.php' );
     } );
     add_submenu_page( 'iterable', 'Add Feed', 'Add Feed', 'manage_options', 'iterable_feed_edit', function() {
-        $iterable = new Iterable( get_option( 'api_key' ) );
+        $iterable = new WP_Iterable( get_option( 'api_key' ) );
         require_once( dirname( __FILE__ ) . '/templates/edit.php' );
     } );
     add_submenu_page( 'iterable', 'Import', 'Import', 'manage_options', 'iterable_import', function() {
-        $iterable = new Iterable( get_option( 'api_key' ) );
+        $iterable = new WP_Iterable( get_option( 'api_key' ) );
         require_once( dirname( __FILE__ ) . '/templates/import.php' );
     } );
     add_submenu_page( 'iterable', 'Message Channels', 'Message Channels', 'manage_options', 'iterable_message_channels', function() {
         require_once( dirname( __FILE__ ) . '/templates/message_channels.php' );
     } );
     add_submenu_page( 'iterable', 'Campaigns', 'Campaigns', 'manage_options', 'iterable_campaigns', function() {
-        $iterable = new Iterable( get_option( 'api_key' ) );
+        $iterable = new WP_Iterable( get_option( 'api_key' ) );
         require_once( dirname( __FILE__ ) . '/templates/campaigns.php' );
     } );
     add_submenu_page( 'iterable', 'Workflows', 'Workflows', 'manage_options', 'iterable_workflows', function() {
-        $iterable = new Iterable( get_option( 'api_key' ) );
+        $iterable = new WP_Iterable( get_option( 'api_key' ) );
         require_once( dirname( __FILE__ ) . '/templates/workflows.php' );
     } );
     add_submenu_page( 'iterable', 'Fields', 'Fields', 'manage_options', 'iterable_fields', function() {
-        $iterable = new Iterable( get_option( 'api_key' ) );
+        $iterable = new WP_Iterable( get_option( 'api_key' ) );
         require_once( dirname( __FILE__ ) . '/templates/fields.php' );
     } );
     add_submenu_page( 'iterable', 'Settings', 'Settings', 'manage_options', 'iterable_settings', function() {
@@ -112,7 +112,7 @@ add_action( 'iterablecampaignshook', function() {
 
             // Is it time for the send today?
             if( time() >= $send_time - $one_hour && time() <= $send_time ) {
-                $iterable = new Iterable( get_option( 'api_key' ) );
+                $iterable = new WP_Iterable( get_option( 'api_key' ) );
                 $result = $iterable->campaigns_create(
                     $c[ 'name' ],
                     $c[ 'list_id' ],
@@ -138,7 +138,7 @@ add_action( 'iterablecampaignshook', function() {
 } );
 
 add_action( 'iterableworkflowshook', function() {
-    $iterable = new Iterable( get_option( 'api_key' ) );
+    $iterable = new WP_Iterable( get_option( 'api_key' ) );
     $workflows = json_decode( get_option( 'workflows' ), true );
     foreach( $workflows as $workflow ) {
         $result = $iterable->trigger_workflow( false, $workflow[ 'workflow_id' ], false, $workflow[ 'list_id' ] );
@@ -179,7 +179,7 @@ add_shortcode( 'subscription_options', function( $atts ) {
 
 array_map( function( $x ) {
     add_action( $x . 'getchannels', function() {
-        $iterable = new Iterable( get_option( 'api_key' ) );
+        $iterable = new WP_Iterable( get_option( 'api_key' ) );
         $user = $iterable->user( $_REQUEST[ 'email' ] );
         $unsubscribed_ids = array();
         if( $user[ 'success' ] &&
@@ -196,7 +196,7 @@ array_map( function( $x ) {
 
 array_map( function( $x ) {
     add_action( $x . 'updatechannel', function() {
-        $iterable = new Iterable( get_option( 'api_key' ) );
+        $iterable = new WP_Iterable( get_option( 'api_key' ) );
 
         // default to empty array
         $ids;
@@ -307,7 +307,7 @@ function import_users( $iterable ) {
 add_action( 'wp_ajax_nopriv_subscribe', function() {
     // test if the iterable key is legit before proceeding
     if( get_option( 'enable_external_imports', false ) && isset( $_REQUEST[ 'api_key' ] ) ) {
-        $iterable = new Iterable( $_REQUEST[ 'api_key' ] );
+        $iterable = new WP_Iterable( $_REQUEST[ 'api_key' ] );
         $test_query = $iterable->lists();
         if( $test_query[ 'success' ] ) { 
             header( 'Access-Control-Allow-Origin: *' );
@@ -317,7 +317,7 @@ add_action( 'wp_ajax_nopriv_subscribe', function() {
 } );
 
 add_action( 'wp_ajax_subscribe', function() {
-    $iterable = new Iterable( get_option( 'api_key' ) );
+    $iterable = new WP_Iterable( get_option( 'api_key' ) );
     import_users( $iterable );
 } );
 
