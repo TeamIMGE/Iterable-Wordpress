@@ -8,7 +8,7 @@ Author: Chris Lewis
 Author URI: http://www.imge.com
 */
 
-define( 'VERSION', '4.3.2' );
+define( 'VERSION', '4.3.3' );
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
@@ -339,7 +339,7 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
             parent::init();
             $this->create_ajax_api();
             IterableData::update_table();
-            $this->iterable = new Iterable( get_option( 'api_key' ) ); 
+            $this->iterable = new WP_Iterable( get_option( 'api_key' ) ); 
             add_action( 'gform_after_submission', array( $this, 'process_feeds' ), 10, 2 );
         }
 
@@ -464,7 +464,7 @@ if( class_exists( 'GFForms' ) && class_exists( 'GFAddOn' ) ) {
         }
 
         public function create_ajax_api() {
-            $iterable = new Iterable( get_option( 'api_key' ) );
+            $iterable = new WP_Iterable( get_option( 'api_key' ) );
 
             add_action( 'wp_ajax_gravityformfieldsbyid', function() {
                 $form = GFAPI::get_form( $_REQUEST[ 'id' ] );
