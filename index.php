@@ -21,7 +21,6 @@ require_once( dirname( __FILE__ ) . '/iterable_helper.php' );
         __FILE__,
         'Iterable-Wordpress'
     );
-    // $myUpdateChecker->setAuthentication('8a1116844378f17005ad4c726614cd3aca25f6be');
     $myUpdateChecker->setBranch('master');
 // }
 
