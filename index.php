@@ -14,16 +14,16 @@ require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
 require_once( dirname( __FILE__ ) . '/iterable_helper.php' );
 
-if( is_admin() ) {
+// if( is_admin() ) {
     require 'plugin-update-checker/plugin-update-checker.php';
     $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
         'https://github.com/TeamIMGE/Iterable-Wordpress/',
         __FILE__,
         'Iterable-Wordpress'
     );
-    $myUpdateChecker->setAuthentication('8a1116844378f17005ad4c726614cd3aca25f6be');
+    // $myUpdateChecker->setAuthentication('8a1116844378f17005ad4c726614cd3aca25f6be');
     $myUpdateChecker->setBranch('plugin-updater');
-}
+// }
 
 add_action( 'admin_init', function() {
     register_setting( 'iterable-settings', 'api_key' );
