@@ -3,12 +3,12 @@
 Plugin Name: Wordpress Iterable Add-On
 Plugin URI: http://www.imge.com
 Description: Iterable integration for Wordpress.
-Version: 4.3.5
+Version: 4.4
 Author: Chris Lewis
 Author URI: http://www.imge.com
 */
 
-define( 'VERSION', '4.3.5' );
+define( 'VERSION', '4.4' );
 
 require_once( dirname( __FILE__ ) . '/data.php' );
 require_once( dirname( __FILE__ ) . '/iterable.php' );
@@ -22,7 +22,7 @@ require_once( dirname( __FILE__ ) . '/iterable_helper.php' );
         'Iterable-Wordpress'
     );
     // $myUpdateChecker->setAuthentication('8a1116844378f17005ad4c726614cd3aca25f6be');
-    $myUpdateChecker->setBranch('plugin-updater');
+    $myUpdateChecker->setBranch('master');
 // }
 
 add_action( 'admin_init', function() {
