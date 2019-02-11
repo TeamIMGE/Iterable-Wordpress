@@ -21,7 +21,7 @@ require_once( dirname( __FILE__ ) . '/iterable_helper.php' );
         __FILE__,
         'Iterable-Wordpress'
     );
-    $myUpdateChecker->setBranch('master');
+    $myUpdateChecker->setBranch('plugin-updater');
 // }
 
 add_action( 'admin_init', function() {
